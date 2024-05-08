@@ -1,5 +1,10 @@
 using APIBurger_PriscilaZuniga.Controllers;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection;
+using APIBurger_PriscilaZuniga.Data;
 var builder = WebApplication.CreateBuilder(args);
+builder.Services.AddDbContext<APIBurger_PriscilaZunigaContext>(options =>
+    options.UseSqlServer(builder.Configuration.GetConnectionString("APIBurger_PriscilaZunigaContext") ?? throw new InvalidOperationException("Connection string 'APIBurger_PriscilaZunigaContext' not found.")));
 
 // Add services to the container.
 
@@ -24,5 +29,7 @@ app.UseAuthorization();
 app.MapControllers();
 
 app.MapBurgerEndpoints();
+
+
 
 app.Run();

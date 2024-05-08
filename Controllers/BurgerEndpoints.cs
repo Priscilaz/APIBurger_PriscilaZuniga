@@ -5,22 +5,22 @@ using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.OpenApi;
 namespace APIBurger_PriscilaZuniga.Controllers;
 
-public static class BurgerEndpoints_PZ
+public static class BurgerEndpoints
 {
     public static void MapBurgerEndpoints (this IEndpointRouteBuilder routes)
     {
         var group = routes.MapGroup("/api/Burger").WithTags(nameof(Burger));
 
-        group.MapGet("/", async (PriscilaZunigaDbContext db) =>
+        group.MapGet("/", async (APIBurger_PriscilaZunigaContext db) =>
         {
-            return await db.Burgers.ToListAsync();
+            return await db.Burger.ToListAsync();
         })
         .WithName("GetAllBurgers")
         .WithOpenApi();
 
-        group.MapGet("/{id}", async Task<Results<Ok<Burger>, NotFound>> (int burgerid, PriscilaZunigaDbContext db) =>
+        group.MapGet("/{id}", async Task<Results<Ok<Burger>, NotFound>> (int burgerid, APIBurger_PriscilaZunigaContext db) =>
         {
-            return await db.Burgers.AsNoTracking()
+            return await db.Burger.AsNoTracking()
                 .FirstOrDefaultAsync(model => model.BurgerId == burgerid)
                 is Burger model
                     ? TypedResults.Ok(model)
@@ -29,9 +29,9 @@ public static class BurgerEndpoints_PZ
         .WithName("GetBurgerById")
         .WithOpenApi();
 
-        group.MapPut("/{id}", async Task<Results<Ok, NotFound>> (int burgerid, Burger burger, PriscilaZunigaDbContext db) =>
+        group.MapPut("/{id}", async Task<Results<Ok, NotFound>> (int burgerid, Burger burger, APIBurger_PriscilaZunigaContext db) =>
         {
-            var affected = await db.Burgers
+            var affected = await db.Burger
                 .Where(model => model.BurgerId == burgerid)
                 .ExecuteUpdateAsync(setters => setters
                     .SetProperty(m => m.BurgerId, burger.BurgerId)
@@ -44,18 +44,18 @@ public static class BurgerEndpoints_PZ
         .WithName("UpdateBurger")
         .WithOpenApi();
 
-        group.MapPost("/", async (Burger burger, PriscilaZunigaDbContext db) =>
+        group.MapPost("/", async (Burger burger, APIBurger_PriscilaZunigaContext db) =>
         {
-            db.Burgers.Add(burger);
+            db.Burger.Add(burger);
             await db.SaveChangesAsync();
             return TypedResults.Created($"/api/Burger/{burger.BurgerId}",burger);
         })
         .WithName("CreateBurger")
         .WithOpenApi();
 
-        group.MapDelete("/{id}", async Task<Results<Ok, NotFound>> (int burgerid, PriscilaZunigaDbContext db) =>
+        group.MapDelete("/{id}", async Task<Results<Ok, NotFound>> (int burgerid, APIBurger_PriscilaZunigaContext db) =>
         {
-            var affected = await db.Burgers
+            var affected = await db.Burger
                 .Where(model => model.BurgerId == burgerid)
                 .ExecuteDeleteAsync();
             return affected == 1 ? TypedResults.Ok() : TypedResults.NotFound();
