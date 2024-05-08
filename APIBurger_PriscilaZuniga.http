@@ -1,0 +1,6 @@
+@APIBurger_PriscilaZuniga_HostAddress = http://localhost:5239
+
+GET {{APIBurger_PriscilaZuniga_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
